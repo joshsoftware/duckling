@@ -11,6 +11,8 @@ WORKDIR /duckling
 
 ADD stack.yaml .
 
+copy . .
+
 ENV LANG=C.UTF-8
 
 RUN stack setup
@@ -31,6 +33,14 @@ RUN apt-get update -qq && \
   apt-get install -qq -y libpcre3 libgmp10 --no-install-recommends && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN ldd --version
+
+RUN echo "deb http://ftp.debian.org/debian sid main" >>/etc/apt/sources.list
+
+RUN apt-get update
+
+RUN apt-get -t sid -y install libc6 libc6-dev libc6-dbg 
 
 COPY --from=builder /root/.local/bin/duckling-example-exe /usr/local/bin/
 
